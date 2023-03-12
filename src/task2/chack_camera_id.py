@@ -1,5 +1,6 @@
 import cv2
 import time
+import platform
 
 
 def check_camera_connection_display(save_flag=False):
@@ -9,9 +10,14 @@ def check_camera_connection_display(save_flag=False):
     """
     true_camera_is = []
 
-    for camera_number in range(0, 5):
-        #  for windows -> cv2.CAP_DSHOW
-        cap = cv2.VideoCapture(camera_number, cv2.CAP_DSHOW)
+    for camera_number in range(0, 10):
+        if (platform.system() == "Linux"):
+            cap = cv2.VideoCapture(camera_number)
+        elif (platform.system() == "Windows"):
+            cap = cv2.VideoCapture(camera_number, cv2.CAP_DSHOW)
+        else:
+            print("Use Linux or Windows.")
+            return
 
         ret, frame = cap.read()
 
@@ -23,7 +29,7 @@ def check_camera_connection_display(save_flag=False):
                 ret2, frame = cap.read()
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-                if elasped_time > 3.0:
+                if elasped_time > 1.0:
                     if save_flag:
                         # save data file
                         save_data_name = f'N_{camera_number}.png'
@@ -46,6 +52,7 @@ def check_camera_connection_display(save_flag=False):
             print("port number", camera_number, "None")
 
     print(f"Number of connected camera: {len(true_camera_is)}")
+    print("Camera ports: " + str(true_camera_is))
 
 
 if __name__ == '__main__':
